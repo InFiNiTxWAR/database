@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE LAST DAWN · ARQUIVO #014</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #080808;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      color: #d3c0c0;
+      min-height: 100vh;
+      padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        repeating-linear-gradient(0deg, rgba(80, 0, 0, 0.06) 0px, rgba(80, 0, 0, 0.06) 1px, transparent 1px, transparent 3px),
+        radial-gradient(circle at 50% 50%, rgba(120, 0, 0, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .main-container {
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    .back-btn {
+      display: inline-block;
+      color: #b44;
+      text-decoration: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #5a1a1a;
+      background: #0a0505;
+      margin-bottom: 1.5rem;
+      transition: 0.2s;
+      letter-spacing: 1px;
+    }
+
+    .back-btn:hover {
+      background: #1a0808;
+      box-shadow: 0 0 15px #a00;
+      color: #d44;
+    }
+
+    .archive-header {
+      border: 2px solid #4a1010;
+      background: #0a0505;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(150, 0, 0, 0.3);
+    }
+
+    .archive-header h1 {
+      font-size: 2rem;
+      color: #c92a2a;
+      text-shadow: 0 0 10px #8b0000;
+      letter-spacing: 3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .archive-header .status-line {
+      color: #b88;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+    }
+
+    .session-title-section {
+      text-align: center;
+      margin: 2rem 0;
+      padding: 1.5rem;
+      border-bottom: 1px solid #3a1515;
+    }
+
+    .session-title-section h2 {
+      font-size: 1.8rem;
+      color: #e05a5a;
+      text-shadow: 0 0 8px #600;
+    }
+
+    .session-title-section .subtitle {
+      font-size: 1.3rem;
+      color: #c44;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .info-card {
+      background: #0c0808;
+      border: 1px solid #2e1111;
+      border-left: 4px solid #b82626;
+      padding: 1.2rem 1.5rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    }
+
+    .info-card h3 {
+      color: #d44;
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 1px;
+      border-bottom: 1px dotted #4a1515;
+      padding-bottom: 0.4rem;
+    }
+
+    .info-card p {
+      line-height: 1.7;
+      margin: 0.3rem 0;
+    }
+
+    .highlight {
+      color: #e08080;
+      font-weight: bold;
+    }
+
+    .section-divider {
+      text-align: center;
+      color: #6b2a2a;
+      margin: 2rem 0;
+      letter-spacing: 4px;
+    }
+
+    /* ESTILOS DOS MVPs COM REVELAÇÃO */
+    .mvp-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .mvp-reveal {
+      background: #0a0606;
+      border: 1px solid #3a1515;
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .mvp-reveal:hover {
+      border-color: #8b2a2a;
+      box-shadow: 0 0 15px rgba(180, 0, 0, 0.3);
+    }
+
+    .mvp-reveal.revealed {
+      border-color: #b82626;
+      background: #0f0808;
+      cursor: default;
+    }
+
+    .mvp-hidden {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .mvp-reveal.revealed .mvp-hidden {
+      display: none;
+    }
+
+    .mvp-question-mark {
+      font-size: 3rem;
+      color: #d44;
+      font-weight: bold;
+      text-shadow: 0 0 15px #f00;
+      animation: pulseQuestion 1.5s infinite;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    @keyframes pulseQuestion {
+      0%, 100% { opacity: 1; text-shadow: 0 0 15px #f00; }
+      50% { opacity: 0.6; text-shadow: 0 0 30px #f00; }
+    }
+
+    .mvp-label-hidden {
+      color: #8b3a3a;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .mvp-category-hidden {
+      color: #6b3a3a;
+      font-size: 0.8rem;
+      margin-top: 0.2rem;
+    }
+
+    .mvp-revealed-content {
+      display: none;
+      align-items: center;
+      gap: 1.2rem;
+      animation: revealContent 0.5s ease;
+    }
+
+    .mvp-reveal.revealed .mvp-revealed-content {
+      display: flex;
+    }
+
+    @keyframes revealContent {
+      0% { opacity: 0; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .mvp-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #b82626;
+      box-shadow: 0 0 20px rgba(200, 0, 0, 0.5);
+      background: #1a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .mvp-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      filter: brightness(0.85) saturate(0.8) sepia(0.2) hue-rotate(-10deg);
+    }
+
+    .mvp-info-revealed {
+      flex: 1;
+    }
+
+    .mvp-name {
+      font-size: 1.3rem;
+      color: #e05a5a;
+      font-weight: bold;
+      text-shadow: 0 0 8px #600;
+      margin-bottom: 0.3rem;
+    }
+
+    .mvp-category {
+      color: #d44;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.3rem;
+    }
+
+    .mvp-description {
+      color: #b88;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    /* Animação de shake ao clicar */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+      20%, 40%, 60%, 80% { transform: translateX(4px); }
+    }
+
+    .shaking {
+      animation: shake 0.6s ease-in-out;
+    }
+
+    /* Efeito de glitch na revelação */
+    @keyframes glitchReveal {
+      0% { clip-path: inset(0 0 90% 0); }
+      10% { clip-path: inset(20% 0 60% 0); }
+      20% { clip-path: inset(60% 0 10% 0); }
+      30% { clip-path: inset(10% 0 80% 0); }
+      40% { clip-path: inset(50% 0 30% 0); }
+      50% { clip-path: inset(0 0 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+
+    .mvp-reveal.just-revealed .mvp-revealed-content {
+      animation: glitchReveal 0.5s steps(5) forwards, revealContent 0.5s ease;
+    }
+
+    .mvp-master {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid #5a1a1a;
+    }
+
+    .mvp-master .mvp-avatar {
+      width: 100px;
+      height: 100px;
+      border: 3px solid #d44;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+    }
+
+    .mvp-master .mvp-name {
+      font-size: 1.5rem;
+      color: #ff6b6b;
+    }
+
+    .moment-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .moment-list li {
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #1a0a0a;
+    }
+
+    .moment-list li::before {
+      content: "► ";
+      color: #a33;
+    }
+
+    .encerramento {
+      background: #0a0404;
+      border: 1px solid #5e1a1a;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      font-style: italic;
+      color: #c99;
+      text-align: center;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    .glitch-text {
+      animation: glitch 2s infinite;
+    }
+
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red; }
+      25% { text-shadow: -2px 0 darkred; }
+      50% { text-shadow: 1px 0 #b00; }
+      75% { text-shadow: -1px 0 #900; }
+      100% { text-shadow: 2px 0 red; }
+    }
+
+    /* Partículas dentro dos cards de MVP */
+    .spark {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #d44;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: sparkFloat 1s ease-out forwards;
+    }
+
+    @keyframes sparkFloat {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      .archive-header h1 { font-size: 1.4rem; }
+      .mvp-revealed-content {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="scanlines"></div>
+
+<div class="main-container">
+  <a href="index.html" class="back-btn">◄ RETORNAR AO DATABASE</a>
+
+  <!-- CABEÇALHO DO ARQUIVO -->
+  <div class="archive-header">
+    <h1 class="glitch-text">━━━ THE LAST DAWN ━━━</h1>
+    <div style="font-size: 1.1rem; color: #c44;">ARQUIVO #014</div>
+    <div class="status-line">
+      STATUS: <span style="color: #0f0;">LIBERADO</span> &nbsp;|&nbsp; 
+      CLASSIFICAÇÃO: <span style="color: #d44;">NÍVEL 2</span> &nbsp;|&nbsp; 
+      DATA: <span style="color: #b88;">28/06/2026</span>
+    </div>
+  </div>
+
+  <!-- TÍTULO DA SESSÃO -->
+  <div class="session-title-section">
+    <h2>🔱 REGISTRO OFICIAL — SESSÃO 14</h2>
+    <div class="subtitle">"Ecos de uma Frequência Morta"</div>
+  </div>
+
+  <!-- XP DE OFÍCIO -->
+  <div class="info-card">
+    <h3>🧮 XP DE OFÍCIO — O QUE CADA UM FEZ</h3>
+    
+    <p><span class="highlight">⚕️ Elion — Médico / Clérigo</span></p>
+    <p>• Prestou atendimento médico em Kael antes da missão</p>
+    <p>• Aplicou conhecimentos analíticos durante a investigação de Greyfield</p>
+    <p>→ <span class="highlight">+30 XP</span> | 520 → <strong>550 XP (550/650)</strong></p>
+    
+    <br>
+    <p><span class="highlight">🔨 Kael — Ferreiro / Técnico de Forja-Viva</span></p>
+    <p>• Não participou da missão</p>
+    <p>→ <span class="highlight">+0 XP</span> | 40 → <strong>40 XP</strong></p>
+    
+    <br>
+    <p><span class="highlight">🏹 Caçador — Rastreador</span></p>
+    <p>• Estudou o ambiente ao redor da estação</p>
+    <p>• Identificou a ausência completa de fauna</p>
+    <p>→ <span class="highlight">+10 XP</span> | 350 → <strong>360 XP</strong></p>
+    
+    <br>
+    <p><span class="highlight">🌿 Evangeline — Herbalista / Alquimista</span></p>
+    <p>• Localizou diversos documentos ocultos</p>
+    <p>• Recuperou registros importantes</p>
+    <p>→ <span class="highlight">+20 XP</span> | 350 → <strong>370 XP</strong></p>
+    
+    <br>
+    <p><span class="highlight">🐊 Crocotop — Pescador</span></p>
+    <p>• Nenhuma ação ligada ao ofício</p>
+    <p>→ <span class="highlight">+0 XP</span> | 180 → <strong>180 XP</strong></p>
+    
+    <br>
+    <p><span class="highlight">🍳 Eren — Cozinheiro</span></p>
+    <p>• Traduziu toda a documentação de Greyfield (sem relação com ofício)</p>
+    <p>→ <span class="highlight">+0 XP</span> | 90 → <strong>90 XP</strong></p>
+    
+    <br>
+    <p><span class="highlight">⚔️ Dravon — Mercenário</span></p>
+    <p>• Não participou da missão</p>
+    <p>→ <span class="highlight">+0 XP</span> | 20 → <strong>20 XP</strong></p>
+  </div>
+
+  <!-- N.E.A. -->
+  <div class="info-card">
+    <h3>📊 N.E.A. — EXPOSIÇÃO ARCANA</h3>
+    <p>Greyfield não era uma ruptura comum. Os personagens permaneceram durante horas em um ponto onde duas realidades coexistiam.</p>
+    <p>• <span class="highlight">Elion:</span> 31% → <strong>33%</strong> (+2%)</p>
+    <p>• <span class="highlight">Evangeline:</span> 31% → <strong>33%</strong> (+2%)</p>
+    <p>• <span class="highlight">Caçador:</span> 32% → <strong>34%</strong> (+2%)</p>
+    <p>• <span class="highlight">Crocotop:</span> 38.9% → <strong>40.9%</strong> (+2%)</p>
+    <p>• <span class="highlight">Eren:</span> 39.4% → <strong>41.4%</strong> (+2%)</p>
+    <p>• Kael: Sem alteração</p>
+    <p>• Dravon: Sem alteração</p>
+  </div>
+
+  <!-- HONRA -->
+  <div class="info-card">
+    <h3>🛡️ HONRA — AÇÕES DA SESSÃO</h3>
+    <p><span class="highlight">⚕️ Elion +2%</span> → 100% (Capado)</p>
+    <p style="font-size:0.85rem; color:#a88;">• Atendimento médico a Kael • Protocolos de segurança • Evitou riscos desnecessários</p>
+    
+    <p><span class="highlight">🌿 Evangeline +2%</span> → 96%</p>
+    <p style="font-size:0.85rem; color:#a88;">• Compartilhou descobertas • Atuou com extrema cautela</p>
+    
+    <p><span class="highlight">🏹 Caçador +2%</span> → 99%</p>
+    <p style="font-size:0.85rem; color:#a88;">• Protegeu a equipe • Manteve vigilância constante</p>
+    
+    <p><span class="highlight">🐊 Crocotop +1%</span> → 100% (Capado)</p>
+    <p style="font-size:0.85rem; color:#a88;">• Permaneceu ao lado do grupo • Lealdade em momentos críticos</p>
+    
+    <p><span class="highlight">🍳 Eren +2%</span> → 100% (Capado)</p>
+    <p style="font-size:0.85rem; color:#a88;">• Compartilhou todas as traduções • Colaboração direta</p>
+    
+    <p>Kael: Sem alteração | Dravon: Sem alteração</p>
+  </div>
+
+  <!-- CORRUPÇÃO -->
+  <div class="info-card">
+    <h3>☠️ CORRUPÇÃO</h3>
+    <p>Nenhum personagem realizou ações que aumentassem sua Corrupção. Também não houve atos suficientes para reduzir Corrupção existente.</p>
+    <p><strong>Nenhuma alteração.</strong></p>
+  </div>
+
+  <!-- DESCOBERTAS -->
+  <div class="info-card">
+    <h3>📚 DESCOBERTAS IMPORTANTES</h3>
+    <p>• Primeira descoberta da Estação Greyfield</p>
+    <p>• Confirmação da existência da Convergência entre realidades</p>
+    <p>• Descoberta dos Protocolos de Evacuação</p>
+    <p>• Descoberta de registros sobre Tiberio</p>
+    <p>• Descoberta da Floresta Sem Céu</p>
+    <p>• Primeiro contato com o rádio de Greyfield</p>
+    <p>• Primeira transmissão contendo os nomes "Tis" e "Dudu"</p>
+    <p>• Descoberta do mural de investigação</p>
+    <p>• Fotografias impossíveis de pessoas que jamais deveriam existir naquela realidade</p>
+    <p>• Fotografias de Elion, Eren e Crocotop presentes em registros de Greyfield</p>
+    <p>• Descoberta de que o grupo era o "barulho na floresta" durante os eventos do spin-off</p>
+    <p>• Descoberta de que a morte temporária de Dudu foi causada pela colisão entre duas realidades</p>
+    <p>• Primeiro encontro com Tiberio</p>
+    <p>• Primeira menção direta ao nome <span class="highlight">Ely</span></p>
+    <p>• Materialização da Árvore Impossível em Zaharam</p>
+  </div>
+
+  <!-- MVPs DA SESSÃO - COM SISTEMA DE REVELAÇÃO -->
+  <div class="info-card">
+    <h3>👑 MVPs DA SESSÃO</h3>
+    <p style="color: #8b3a3a; font-size: 0.85rem; margin-bottom: 1rem;">🛈 CLIQUE NAS INTERROGAÇÕES PARA REVELAR OS MVPs</p>
+    
+    <div class="mvp-container">
+      
+      <!-- MVP de Investigação - EREN -->
+      <div class="mvp-reveal" onclick="revealMVP(this)" data-mvp="investigacao">
+        <div class="mvp-hidden">
+          <div class="mvp-question-mark">?</div>
+          <div>
+            <div class="mvp-label-hidden">MVP DE INVESTIGAÇÃO</div>
+            <div class="mvp-category-hidden">[CLIQUE PARA REVELAR]</div>
+          </div>
+        </div>
+        <div class="mvp-revealed-content">
+          <div class="mvp-avatar">
+            <!-- FOTO DO EREN -->
+            <img src="/assets/img/eren.png" alt="Eren">
+          </div>
+          <div class="mvp-info-revealed">
+            <div class="mvp-name">Eren</div>
+            <div class="mvp-category">📜 MVP de Investigação</div>
+            <div class="mvp-description">
+              • Traduziu toda a documentação encontrada<br>
+              • Tornou possível compreender Greyfield<br>
+              • Sem ele, diversas pistas permaneceriam inacessíveis
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MVP de Raciocínio - ELION -->
+      <div class="mvp-reveal" onclick="revealMVP(this)" data-mvp="raciocinio">
+        <div class="mvp-hidden">
+          <div class="mvp-question-mark">?</div>
+          <div>
+            <div class="mvp-label-hidden">MVP DE RACIOCÍNIO</div>
+            <div class="mvp-category-hidden">[CLIQUE PARA REVELAR]</div>
+          </div>
+        </div>
+        <div class="mvp-revealed-content">
+          <div class="mvp-avatar">
+            <!-- FOTO DO ELION -->
+            <img src="/assets/img/elion.png" alt="Elion">
+          </div>
+          <div class="mvp-info-revealed">
+            <div class="mvp-name">Elion</div>
+            <div class="mvp-category">🧠 MVP de Raciocínio</div>
+            <div class="mvp-description">
+              • Conectou praticamente todas as pistas da estação<br>
+              • Lembrou constantemente dos protocolos encontrados<br>
+              • Guiou boa parte das decisões da exploração
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MVP de Descobertas - EVANGELINE -->
+      <div class="mvp-reveal" onclick="revealMVP(this)" data-mvp="descobertas">
+        <div class="mvp-hidden">
+          <div class="mvp-question-mark">?</div>
+          <div>
+            <div class="mvp-label-hidden">MVP DE DESCOBERTAS</div>
+            <div class="mvp-category-hidden">[CLIQUE PARA REVELAR]</div>
+          </div>
+        </div>
+        <div class="mvp-revealed-content">
+          <div class="mvp-avatar">
+            <!-- FOTO DA EVANGELINE -->
+            <img src="/assets/img/evangeline.png" alt="Evangeline">
+          </div>
+          <div class="mvp-info-revealed">
+            <div class="mvp-name">Evangeline</div>
+            <div class="mvp-category">🔎 MVP de Descobertas</div>
+            <div class="mvp-description">
+              • Encontrou a maior quantidade de documentos<br>
+              • Recuperou registros essenciais<br>
+              • Expandiu significativamente a investigação
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MVP DA SESSÃO - ELION -->
+      <div class="mvp-reveal mvp-master" onclick="revealMVP(this)" data-mvp="master">
+        <div class="mvp-hidden">
+          <div class="mvp-question-mark" style="font-size:3.5rem;">?</div>
+          <div>
+            <div class="mvp-label-hidden" style="font-size:1.1rem;">👑 MVP DA SESSÃO</div>
+            <div class="mvp-category-hidden">[CLIQUE PARA REVELAR]</div>
+          </div>
+        </div>
+        <div class="mvp-revealed-content">
+          <div class="mvp-avatar" style="width:100px; height:100px;">
+            <!-- FOTO DO ELION (MVP) -->
+            <img src="/assets/img/elion.png" alt="Elion">
+          </div>
+          <div class="mvp-info-revealed">
+            <div class="mvp-name" style="font-size:1.5rem;">Elion</div>
+            <div class="mvp-category">👑 MVP DA SESSÃO</div>
+            <div class="mvp-description">
+              • Curou Kael antes da missão<br>
+              • Foi quem mais conectou as informações encontradas<br>
+              • Liderou o raciocínio lógico durante a exploração<br>
+              • Evitou diversos perigos ao lembrar constantemente dos Protocolos de Evacuação<br>
+              • Foi peça central para que Greyfield fosse compreendida pelo grupo
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MOMENTOS MARCANTES -->
+  <div class="info-card">
+    <h3>🎬 MOMENTOS MARCANTES</h3>
+    <ul class="moment-list">
+      <li>Araly sendo insultado por Dravon ao convocar os heróis</li>
+      <li>A punição imposta por Barn após o incidente envolvendo Dravon e Kael</li>
+      <li>A tensa negociação entre Barn Clant e Elion no palácio</li>
+      <li>A chegada à Estação Greyfield</li>
+      <li>O rádio ligando sozinho pela primeira vez</li>
+      <li>A descoberta do Protocolo de Evacuação</li>
+      <li>O mural de investigação de Tiberio</li>
+      <li>As fotografias impossíveis de personagens de Elfheim</li>
+      <li>A floresta escondida atrás da porta de madeira</li>
+      <li>A revelação de que eles eram o "barulho na floresta"</li>
+      <li>A colisão entre duas realidades durante a morte de Dudu</li>
+      <li>O colapso completo de Greyfield</li>
+      <li>O primeiro encontro com Tiberio</li>
+      <li>A frase: <span class="highlight">"Vocês demoraram mais do que eu esperava."</span></li>
+      <li>A revelação do nome <span class="highlight">Ely</span></li>
+      <li>O surgimento da Árvore Impossível em Zaharam</li>
+    </ul>
+  </div>
+
+  <!-- ENCERRAMENTO -->
+  <div class="encerramento">
+    <p>📖 <strong>ENCERRAMENTO</strong></p>
+    <p>Greyfield desapareceu.</p>
+    <p>Mas ela deixou algo para trás.</p>
+    <p>Não apenas uma árvore.</p>
+    <p>Não apenas documentos.</p>
+    <p>Ela deixou perguntas.</p>
+    <p>E, pela primeira vez...</p>
+    <p>um rosto.</p>
+    <br>
+    <p><strong>Tiberio agora sabe que eles existem.</strong></p>
+    <p><strong>E eles finalmente sabem que nunca estavam investigando Greyfield.</strong></p>
+    <p><strong>Greyfield estava esperando por eles.</strong></p>
+  </div>
+
+  <div style="text-align:center; margin-top:2rem;">
+    <a href="/index.html" class="back-btn">◄ RETORNAR AO DATABASE</a>
+  </div>
+</div>
+
+<script>
+  function revealMVP(element) {
+    // Se já foi revelado, não faz nada
+    if (element.classList.contains('revealed')) {
+      return;
+    }
+    
+    // Adiciona classe de shaking
+    element.classList.add('shaking');
+    
+    // Cria partículas
+    createSparks(element);
+    
+    // Após a animação de shake, revela o conteúdo
+    setTimeout(() => {
+      element.classList.remove('shaking');
+      element.classList.add('revealed');
+      element.classList.add('just-revealed');
+      
+      // Remove a classe de glitch após a animação
+      setTimeout(() => {
+        element.classList.remove('just-revealed');
+      }, 500);
+      
+      // Efeito sonoro simulado (opcional - só visual)
+      console.log('🔓 MVP REVELADO: ' + element.getAttribute('data-mvp'));
+    }, 600);
+  }
+  
+  function createSparks(element) {
+    const rect = element.getBoundingClientRect();
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    for (let i = 0; i < 12; i++) {
+      const spark = document.createElement('div');
+      spark.className = 'spark';
+      
+      const angle = (Math.PI * 2 * i) / 12;
+      const distance = 30 + Math.random() * 40;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+      
+      spark.style.setProperty('--tx', tx + 'px');
+      spark.style.setProperty('--ty', ty + 'px');
+      spark.style.left = centerX + 'px';
+      spark.style.top = centerY + 'px';
+      
+      element.appendChild(spark);
+      
+      // Remove a partícula após a animação
+      setTimeout(() => {
+        spark.remove();
+      }, 1000);
+    }
+  }
+  
+  // Efeito de glitch no título ao carregar a página
+  window.addEventListener('load', function() {
+    const title = document.querySelector('.glitch-text');
+    if (title) {
+      setInterval(() => {
+        title.style.textShadow = '3px 0 red, -3px 0 darkred';
+        setTimeout(() => {
+          title.style.textShadow = '0 0 10px #8b0000';
+        }, 100);
+      }, 3000);
+    }
+  });
+</script>
+
+</body>
+</html>

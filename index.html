@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>THE LAST DAWN • DATABASE</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #080808;
+      font-family: 'Courier New', 'Fira Code', monospace;
+      color: #c7c7c7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        repeating-linear-gradient(0deg, rgba(80, 0, 0, 0.08) 0px, rgba(80, 0, 0, 0.08) 1px, transparent 1px, transparent 3px),
+        repeating-linear-gradient(90deg, rgba(80, 0, 0, 0.05) 0px, rgba(80, 0, 0, 0.05) 1px, transparent 1px, transparent 3px),
+        radial-gradient(circle at 30% 40%, rgba(120, 0, 0, 0.1) 0%, transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(80, 0, 0, 0.08) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(180, 40, 40, 0.25);
+      border-radius: 50%;
+      width: 2px;
+      height: 2px;
+      animation: floatParticle 8s infinite ease-in-out;
+      opacity: 0.3;
+    }
+
+    @keyframes floatParticle {
+      0% { transform: translateY(0px) translateX(0); opacity: 0.2; }
+      50% { transform: translateY(-30px) translateX(10px); opacity: 0.5; }
+      100% { transform: translateY(0px) translateX(0); opacity: 0.2; }
+    }
+
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 4px);
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    .container {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(10, 10, 10, 0.8);
+      backdrop-filter: blur(6px);
+      border: 1px solid #3a1515;
+      box-shadow: 0 0 30px rgba(120, 0, 0, 0.3), inset 0 0 15px rgba(0,0,0,0.9);
+      padding: 2rem;
+      border-radius: 8px;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .top-panel {
+      border: 1px solid #5a1a1a;
+      background: #0a0505;
+      padding: 1.2rem 1.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      color: #b88;
+      box-shadow: 0 0 12px rgba(180, 0, 0, 0.3);
+      text-transform: uppercase;
+    }
+
+    .panel-item {
+      display: flex;
+      gap: 0.5rem;
+      align-items: baseline;
+    }
+
+    .panel-label {
+      color: #8b3a3a;
+      font-weight: bold;
+    }
+
+    .main-title {
+      text-align: center;
+      border-bottom: 2px solid #4a1010;
+      padding-bottom: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .main-title h1 {
+      font-size: 2.8rem;
+      letter-spacing: 6px;
+      color: #c92a2a;
+      text-shadow: 0 0 15px #8b0000, 0 0 30px #4a0000;
+      word-break: break-word;
+      animation: glitchAnim 2s infinite;
+    }
+
+    @keyframes glitchAnim {
+      0% { text-shadow: 2px 0 red; }
+      25% { text-shadow: -2px 0 darkred; }
+      50% { text-shadow: 1px 0 #b00; }
+      75% { text-shadow: -1px 0 #900; }
+      100% { text-shadow: 2px 0 red; }
+    }
+
+    .subtitle {
+      color: #7a6a6a;
+      font-size: 0.9rem;
+      margin-top: 0.2rem;
+    }
+
+    .sessions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.8rem;
+      margin-top: 0.5rem;
+    }
+
+    .session-card {
+      background: #0c0a0a;
+      border: 1px solid #2e1111;
+      padding: 1.5rem 1.2rem;
+      border-radius: 6px;
+      transition: all 0.25s ease;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+      min-height: 220px;
+      justify-content: center;
+    }
+
+    .session-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px rgba(200, 30, 30, 0.6);
+      border-color: #9b2222;
+    }
+
+    .available {
+      border-left: 4px solid #b82626;
+      background: #0f0808;
+    }
+
+    .available .session-title {
+      color: #e05a5a;
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 8px red;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #d44;
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 12px red;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+
+    .btn-access {
+      margin-top: 1.2rem;
+      background: transparent;
+      border: 1px solid #b84040;
+      color: #e08b8b;
+      padding: 0.5rem 1.5rem;
+      font-family: inherit;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: 0.2s;
+      text-transform: uppercase;
+      background: rgba(80, 0, 0, 0.3);
+    }
+
+    .btn-access:hover {
+      background: #a02020;
+      color: #fff;
+      box-shadow: 0 0 18px #c44;
+    }
+
+    .locked {
+      filter: blur(1.5px);
+      background: #0a0707;
+      border: 1px solid #2a0f0f;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .locked:hover {
+      filter: blur(0px);
+      border-color: #7a2b2b;
+      transform: translateY(-4px);
+    }
+
+    .locked-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      color: #4a3535;
+    }
+
+    .big-lock {
+      font-size: 3.2rem;
+      filter: drop-shadow(0 0 10px crimson);
+      color: #b33;
+      margin-bottom: 0.3rem;
+    }
+
+    .red-circle {
+      width: 70px;
+      height: 70px;
+      border: 2px solid #8b1a1a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: spinSlow 8s linear infinite;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 0 18px #a00;
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .denied-text {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #b05050;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .hover-message {
+      position: absolute;
+      bottom: 12px;
+      background: #1f0808;
+      padding: 0.3rem 1rem;
+      font-size: 0.7rem;
+      color: #c44;
+      border-radius: 3px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    .locked:hover .hover-message {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .top-panel {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .main-title h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .glitch-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 998;
+      opacity: 0.03;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="none"/><line x1="0" y1="20" x2="100" y2="20" stroke="white" stroke-width="0.5"/><line x1="0" y1="45" x2="100" y2="45" stroke="white" stroke-width="0.3"/><line x1="0" y1="78" x2="100" y2="78" stroke="white" stroke-width="0.7"/></svg>');
+      background-size: 200px 200px;
+    }
+  </style>
+</head>
+<body>
+<div class="particles" id="particlesContainer"></div>
+<div class="scanlines"></div>
+<div class="glitch-overlay"></div>
+
+<div class="container">
+  <!-- PAINEL SUPERIOR -->
+  <div class="top-panel">
+    <div class="panel-item"><span class="panel-label">╔══ THE LAST DAWN DATABASE ══╗</span></div>
+    <div class="panel-item"><span class="panel-label">Operador:</span> Barn Clant</div>
+    <div class="panel-item"><span class="panel-label">Status:</span> <span style="color:#c44;">● ONLINE</span></div>
+    <div class="panel-item"><span class="panel-label">Arquivos:</span> 01 / 06</div>
+    <div class="panel-item"><span class="panel-label">Permissão:</span> NÍVEL II</div>
+  </div>
+
+  <div class="main-title">
+    <h1>THE LAST DAWN</h1>
+    <div class="subtitle">━━━ ARQUIVOS CONFIDENCIAIS · ACESSO RESTRITO ━━━</div>
+  </div>
+
+  <!-- GRID DE SESSÕES -->
+  <div class="sessions-grid" id="sessionGrid">
+    <!-- Sessão 14 (disponível) -->
+    <div class="session-card available" id="card14" onclick="window.location.href='sessoes/sessao14.html'">
+      <div class="session-title">SESSÃO 14</div>
+      <div style="font-size:1.2rem; font-weight:bold; color:#d45;">ECOS DE UMA FREQUÊNCIA MORTA</div>
+      <div style="margin:0.8rem 0;"><span class="status-dot"></span> Arquivo disponível</div>
+      <div style="color:#9a7a7a; font-size:0.8rem;">Data: 28/06/2026</div>
+      <button class="btn-access">▶ ACESSAR REGISTRO</button>
+    </div>
+
+    <!-- Cards bloqueados 15 a 19 serão gerados via JavaScript -->
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Criar partículas vermelhas
+    const particlesContainer = document.getElementById('particlesContainer');
+    for (let i = 0; i < 40; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.top = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 10 + 's';
+      particle.style.width = (Math.random() * 3 + 1) + 'px';
+      particle.style.height = particle.style.width;
+      particlesContainer.appendChild(particle);
+    }
+
+    // Gerar cards bloqueados 15-19
+    const grid = document.getElementById('sessionGrid');
+    for (let i = 15; i <= 19; i++) {
+      const card = document.createElement('div');
+      card.className = 'session-card locked';
+      card.setAttribute('data-session', i);
+      card.innerHTML = `
+        <div class="locked-content">
+          <div class="red-circle">
+            <span class="big-lock">🔒</span>
+          </div>
+          <div style="font-size:1.1rem; letter-spacing:2px; color:#632e2e;">██████████</div>
+          <div class="denied-text">ACCESS DENIED</div>
+          <div class="hover-message">⛔ ACESSO NEGADO · LIBERADO APÓS A SESSÃO</div>
+        </div>
+      `;
+      card.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showDeniedPopup();
+      });
+      grid.appendChild(card);
+    }
+
+    // Simular inicialização no console
+    console.log("%cINICIALIZANDO SISTEMA...", "color: #c44;");
+    console.log("%cConectando...", "color: #c44;");
+    console.log("%cVerificando Permissões...", "color: #c44;");
+    console.log("%cAcesso Concedido.", "color: #0f0;");
+    console.log("%cTHE LAST DAWN DATABASE", "color: #d44; font-size: 16px;");
+  })();
+
+  function showDeniedPopup() {
+    const existing = document.getElementById('deniedToast');
+    if (existing) existing.remove();
+    
+    const toast = document.createElement('div');
+    toast.id = 'deniedToast';
+    toast.style.position = 'fixed';
+    toast.style.bottom = '30px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.background = '#1f0404';
+    toast.style.border = '1px solid #b33';
+    toast.style.color = '#d44';
+    toast.style.padding = '0.8rem 2rem';
+    toast.style.fontFamily = 'Courier New, monospace';
+    toast.style.zIndex = '2000';
+    toast.style.boxShadow = '0 0 25px red';
+    toast.style.textAlign = 'center';
+    toast.style.letterSpacing = '1px';
+    toast.innerHTML = '⛔ VERIFICANDO CREDENCIAIS...<br>ACESSO NEGADO.<br>Arquivo ainda não disponível.';
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.5s';
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 500);
+    }, 2500);
+  }
+</script>
+</body>
+</html>
