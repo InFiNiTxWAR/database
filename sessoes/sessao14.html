@@ -399,7 +399,8 @@
 <div class="scanlines"></div>
 
 <div class="main-container">
-  <a href="index.html" class="back-btn">◄ RETORNAR AO DATABASE</a>
+  <!-- ⚠️ CORRIGIDO: voltando uma pasta para acessar index.html -->
+  <a href="../index.html" class="back-btn">◄ RETORNAR AO DATABASE</a>
 
   <!-- CABEÇALHO DO ARQUIVO -->
   <div class="archive-header">
@@ -539,8 +540,8 @@
         </div>
         <div class="mvp-revealed-content">
           <div class="mvp-avatar">
-            <!-- FOTO DO EREN -->
-            <img src="/assets/img/eren.png" alt="Eren">
+            <!-- ⚠️ CORRIGIDO: ../ para voltar da pasta sessoes/ e acessar assets/ -->
+            <img src="../assets/img/eren.png" alt="Eren">
           </div>
           <div class="mvp-info-revealed">
             <div class="mvp-name">Eren</div>
@@ -565,8 +566,8 @@
         </div>
         <div class="mvp-revealed-content">
           <div class="mvp-avatar">
-            <!-- FOTO DO ELION -->
-            <img src="/assets/img/elion.png" alt="Elion">
+            <!-- ⚠️ CORRIGIDO -->
+            <img src="../assets/img/elion.png" alt="Elion">
           </div>
           <div class="mvp-info-revealed">
             <div class="mvp-name">Elion</div>
@@ -591,8 +592,8 @@
         </div>
         <div class="mvp-revealed-content">
           <div class="mvp-avatar">
-            <!-- FOTO DA EVANGELINE -->
-            <img src="/assets/img/evangeline.png" alt="Evangeline">
+            <!-- ⚠️ CORRIGIDO -->
+            <img src="../assets/img/evangeline.png" alt="Evangeline">
           </div>
           <div class="mvp-info-revealed">
             <div class="mvp-name">Evangeline</div>
@@ -617,8 +618,8 @@
         </div>
         <div class="mvp-revealed-content">
           <div class="mvp-avatar" style="width:100px; height:100px;">
-            <!-- FOTO DO ELION (MVP) -->
-            <img src="/assets/img/elion.png" alt="Elion">
+            <!-- ⚠️ CORRIGIDO -->
+            <img src="../assets/img/elion.png" alt="Elion">
           </div>
           <div class="mvp-info-revealed">
             <div class="mvp-name" style="font-size:1.5rem;">Elion</div>
@@ -677,35 +678,29 @@
   </div>
 
   <div style="text-align:center; margin-top:2rem;">
-    <a href="/index.html" class="back-btn">◄ RETORNAR AO DATABASE</a>
+    <!-- ⚠️ CORRIGIDO -->
+    <a href="../index.html" class="back-btn">◄ RETORNAR AO DATABASE</a>
   </div>
 </div>
 
 <script>
   function revealMVP(element) {
-    // Se já foi revelado, não faz nada
     if (element.classList.contains('revealed')) {
       return;
     }
     
-    // Adiciona classe de shaking
     element.classList.add('shaking');
-    
-    // Cria partículas
     createSparks(element);
     
-    // Após a animação de shake, revela o conteúdo
     setTimeout(() => {
       element.classList.remove('shaking');
       element.classList.add('revealed');
       element.classList.add('just-revealed');
       
-      // Remove a classe de glitch após a animação
       setTimeout(() => {
         element.classList.remove('just-revealed');
       }, 500);
       
-      // Efeito sonoro simulado (opcional - só visual)
       console.log('🔓 MVP REVELADO: ' + element.getAttribute('data-mvp'));
     }, 600);
   }
@@ -731,14 +726,12 @@
       
       element.appendChild(spark);
       
-      // Remove a partícula após a animação
       setTimeout(() => {
         spark.remove();
       }, 1000);
     }
   }
   
-  // Efeito de glitch no título ao carregar a página
   window.addEventListener('load', function() {
     const title = document.querySelector('.glitch-text');
     if (title) {
